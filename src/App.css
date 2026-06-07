@@ -1,0 +1,57 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0a0f;
+  --bg2: #111118;
+  --gold: #f5c842;
+  --gold2: #e8a020;
+  --red: #e8304a;
+  --teal: #2ee8c0;
+  --purple: #a855f7;
+  --white: #f0ece0;
+  --gray: #888;
+  --font-title: 'Bebas Neue', sans-serif;
+  --font-body: 'Space Mono', monospace;
+  --font-ui: 'Syne', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.app { min-height: 100vh; }
+
+button {
+  cursor: pointer;
+  font-family: var(--font-ui);
+  border: none;
+  outline: none;
+}
+
+button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+input, textarea {
+  font-family: var(--font-body);
+  background: transparent;
+  color: var(--white);
+}
+
+.scanlines {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+}
