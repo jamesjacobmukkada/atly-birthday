@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import './Landing.css'
 
 const BIRTHDAY = new Date('2026-06-15T00:00:00')
@@ -14,14 +14,20 @@ function getCountdown() {
   return { d, h, m, s }
 }
 
+const STARS = Array.from({ length: 60 }, (_, i) => ({
+  id: i,
+  left: `${(i * 37.3 + 11) % 100}%`,
+  top: `${(i * 53.7 + 7) % 100}%`,
+  delay: `${(i * 0.17) % 3}s`,
+  size: `${(i % 2) + 1}px`,
+}))
+
 export default function Landing({ onNavigate, gameUnlocked }) {
   const [countdown, setCountdown] = useState(getCountdown())
   const [glitch, setGlitch] = useState(false)
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCountdown(getCountdown())
-    }, 1000)
+    const timer = setInterval(() => setCountdown(getCountdown()), 1000)
     return () => clearInterval(timer)
   }, [])
 
@@ -38,13 +44,11 @@ export default function Landing({ onNavigate, gameUnlocked }) {
       <div className="scanlines" />
 
       <div className="stars">
-        {[...Array(60)].map((_, i) => (
-          <div key={i} className="star" style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            animationDelay: `${Math.random() * 3}s`,
-            width: `${Math.random() * 2 + 1}px`,
-            height: `${Math.random() * 2 + 1}px`,
+        {STARS.map(s => (
+          <div key={s.id} className="star" style={{
+            left: s.left, top: s.top,
+            animationDelay: s.delay,
+            width: s.size, height: s.size,
           }} />
         ))}
       </div>
@@ -75,7 +79,7 @@ export default function Landing({ onNavigate, gameUnlocked }) {
           </p>
           <br />
           <p className="highlight-text">
-            🎯 Mission: Help Atly escape a maze of his own iconic quotes, legendary konaness,
+            Mission: Help Atly escape a maze of his own iconic quotes, legendary konaness,
             and the chaos only a lawyer-musician from Kerala could create.
           </p>
         </div>
