@@ -1,13 +1,558 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Happy 30th Atly 🎂</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy 30th Atly 🎂</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0f;--bg2:#111118;--gold:#f5c842;--gold2:#e8a020;--red:#e8304a;--teal:#2ee8c0;--purple:#a855f7;--white:#f0ece0;--gray:#888}
+body{background:var(--bg);color:var(--white);font-family:'Space Mono',monospace;min-height:100vh;overflow-x:hidden}
+button{cursor:pointer;font-family:'Syne',sans-serif;border:none;outline:none}
+.page{min-height:100vh;display:none;flex-direction:column;align-items:center;padding:2rem 1rem 4rem;position:relative}
+.page.active{display:flex}
+.scanlines{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:9999;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px)}
+
+/* LANDING */
+.stars{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.star{position:absolute;background:#fff;border-radius:50%;opacity:0.4;animation:twinkle 3s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.2}50%{opacity:.8}}
+.landing-content{position:relative;z-index:1;max-width:700px;width:100%;display:flex;flex-direction:column;align-items:center;gap:2.5rem}
+.warning-tape{background:var(--gold);color:#000;font-family:'Syne',sans-serif;font-weight:700;font-size:.75rem;letter-spacing:.1em;padding:.4rem 2rem;width:120%;text-align:center;transform:rotate(-1deg);margin-bottom:1rem}
+.age-badge{background:var(--red);color:#fff;font-family:'Bebas Neue',sans-serif;font-size:5rem;line-height:1;width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;border:4px solid var(--gold);animation:pulse-badge 2s ease-in-out infinite}
+@keyframes pulse-badge{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.main-title{display:flex;flex-direction:column;line-height:.9;text-align:center}
+.tl1{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,15vw,7rem);color:var(--white);letter-spacing:.05em}
+.tl2{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,15vw,7rem);color:var(--gold);letter-spacing:.05em}
+.tl3{font-family:'Bebas Neue',sans-serif;font-size:clamp(5rem,20vw,9rem);color:var(--teal);letter-spacing:.08em;text-shadow:0 0 30px rgba(46,232,192,.4)}
+.subtitle{font-family:'Syne',sans-serif;color:var(--gray);font-size:.9rem;letter-spacing:.15em;margin-top:.75rem;text-transform:uppercase}
+.story-box{background:var(--bg2);border:1px solid rgba(245,200,66,.3);border-radius:4px;padding:1.75rem 2rem;font-size:.88rem;line-height:1.8;color:#ccc;width:100%}
+.story-label{font-family:'Syne',sans-serif;font-size:.7rem;letter-spacing:.2em;color:var(--gold);margin-bottom:1rem}
+.highlight-text{color:var(--white);border-left:3px solid var(--teal);padding-left:1rem;margin-top:1rem;display:block}
+.roles-row{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center}
+.role-chip{font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;padding:.4rem 1rem;border:1px solid rgba(168,85,247,.5);border-radius:100px;color:var(--purple);background:rgba(168,85,247,.08)}
+.cta-section{display:flex;flex-direction:column;align-items:center;gap:.75rem;width:100%}
+.cta-label{font-family:'Syne',sans-serif;font-size:.7rem;letter-spacing:.2em;color:var(--gray);text-transform:uppercase}
+.btn-primary{background:var(--gold);color:#000;font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;letter-spacing:.08em;padding:1rem 2.5rem;border-radius:4px;transition:transform .1s,background .2s;text-transform:uppercase}
+.btn-primary:hover{background:var(--gold2);transform:scale(1.03)}
+.btn-secondary{background:transparent;color:var(--teal);font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;padding:.75rem 2rem;border:2px solid var(--teal);border-radius:4px;transition:all .2s;text-transform:uppercase;letter-spacing:.06em}
+.btn-secondary:hover{background:rgba(46,232,192,.1)}
+.cta-sub{font-size:.78rem;color:var(--gray);font-family:'Syne',sans-serif}
+.countdown-block{margin-top:1.5rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.5rem}
+.countdown-label{font-family:'Syne',sans-serif;font-size:.75rem;letter-spacing:.2em;color:var(--gray);text-transform:uppercase}
+.countdown-digits{display:flex;align-items:center;gap:.25rem}
+.cd-unit{display:flex;flex-direction:column;align-items:center;background:var(--bg2);border:1px solid rgba(245,200,66,.2);border-radius:4px;padding:.5rem .75rem;min-width:60px}
+.cd-unit span{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--gold);line-height:1}
+.cd-unit label{font-family:'Syne',sans-serif;font-size:.6rem;color:var(--gray);text-transform:uppercase;letter-spacing:.1em;margin-top:2px}
+.cd-sep{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--gold);padding-bottom:10px}
+.countdown-note{font-size:.75rem;color:var(--gray);font-family:'Syne',sans-serif}
+
+/* SUBMIT */
+.submit-content{max-width:680px;width:100%;display:flex;flex-direction:column;gap:2rem;position:relative;z-index:1}
+.back-btn{background:none;color:var(--gray);font-family:'Syne',sans-serif;font-size:.8rem;letter-spacing:.1em;border:none;padding:0;cursor:pointer;text-transform:uppercase;align-self:flex-start;transition:color .2s}
+.back-btn:hover{color:var(--white)}
+.page-tag{font-family:'Syne',sans-serif;font-size:.7rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase}
+.submit-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,8vw,3.5rem);line-height:1.05;color:var(--white);letter-spacing:.03em}
+.submit-desc{font-size:.85rem;color:#aaa;line-height:1.7;max-width:540px}
+.form-block{display:flex;flex-direction:column;gap:.75rem;background:var(--bg2);border:1px solid rgba(245,200,66,.25);border-radius:4px;padding:1.5rem}
+.char-count{font-family:'Syne',sans-serif;font-size:.7rem;color:var(--gray);text-align:right;letter-spacing:.05em}
+.quote-input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:3px;padding:1rem;font-size:.9rem;line-height:1.6;color:var(--white);resize:none;transition:border-color .2s;font-family:'Space Mono',monospace}
+.quote-input::placeholder{color:#555;font-style:italic}
+.quote-input:focus{border-color:rgba(245,200,66,.5);outline:none}
+.error-msg{font-family:'Syne',sans-serif;font-size:.8rem;color:var(--red);padding:.5rem .75rem;background:rgba(232,48,74,.1);border-radius:3px;border-left:3px solid var(--red)}
+.submit-btn{background:var(--gold);color:#000;font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;letter-spacing:.08em;padding:.9rem 1.5rem;border-radius:3px;border:none;cursor:pointer;transition:all .15s;text-transform:uppercase}
+.submit-btn:hover{background:var(--gold2);transform:scale(1.01)}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed}
+.success-block{text-align:center;display:flex;flex-direction:column;align-items:center;gap:.75rem;background:var(--bg2);border:1px solid rgba(46,232,192,.3);border-radius:4px;padding:2.5rem;animation:pop-in .3s ease}
+@keyframes pop-in{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+.success-icon{font-size:3rem}
+.success-block h3{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--teal)}
+.success-block p{font-size:.85rem;color:#aaa;font-family:'Syne',sans-serif}
+.outline-btn{background:transparent;color:var(--teal);font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;padding:.9rem 1.5rem;border:2px solid var(--teal);border-radius:3px;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.outline-btn:hover{background:rgba(46,232,192,.08)}
+.countdown-teaser{display:flex;flex-direction:column;align-items:center;gap:.75rem;padding:1.5rem;background:var(--bg2);border:1px dashed rgba(245,200,66,.2);border-radius:4px;text-align:center}
+.teaser-label{font-family:'Syne',sans-serif;font-size:.7rem;letter-spacing:.15em;color:var(--gray);text-transform:uppercase}
+.cd-mini{display:flex;gap:.75rem;font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--gold)}
+.cd-mini span{background:rgba(245,200,66,.1);padding:.2rem .6rem;border-radius:3px;min-width:56px;text-align:center}
+.live-row{display:flex;align-items:center;gap:.5rem;font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;color:var(--teal)}
+.live-dot{width:10px;height:10px;background:var(--teal);border-radius:50%;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.inline-link{background:none;border:none;color:var(--gold);font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;text-decoration:underline}
+.wall-label{font-family:'Syne',sans-serif;font-size:.7rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase}
+.empty-wall{font-size:.85rem;color:var(--gray);font-family:'Syne',sans-serif;text-align:center;padding:2rem;border:1px dashed rgba(255,255,255,.1);border-radius:4px}
+.quotes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.75rem;margin-top:.75rem}
+.quote-card{background:var(--bg2);border-radius:4px;padding:1rem 1.1rem}
+.quote-card.l1{border-left:3px solid var(--gold)}
+.quote-card.l2{border-left:3px solid var(--teal)}
+.quote-card.l3{border-left:3px solid var(--purple)}
+.quote-num{font-family:'Syne',sans-serif;font-size:.65rem;color:var(--gray);margin-bottom:.4rem;letter-spacing:.1em}
+.quote-text{font-size:.82rem;line-height:1.6;color:#ccc;font-style:italic}
+
+/* GAME */
+.game-page{min-height:100vh;display:none;justify-content:center;align-items:flex-start;padding:1rem;position:relative}
+.game-page.active{display:flex}
+.game-inner{width:100%;max-width:640px;display:flex;flex-direction:column;gap:1rem;position:relative;z-index:1}
+.game-topbar{display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap}
+.game-title-bar{font-family:'Syne',sans-serif;font-size:.65rem;letter-spacing:.15em;color:var(--gold);text-transform:uppercase;flex:1;text-align:center}
+.game-stats{display:flex;gap:.75rem}
+.stat{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--white);letter-spacing:.05em}
+.stat.hits{color:var(--red)}
+.canvas-wrap{position:relative;width:100%;border:2px solid rgba(245,200,66,.3);border-radius:4px;overflow:hidden;background:#0a0a0f;aspect-ratio:6/5}
+.game-canvas{width:100%;height:100%;display:block;image-rendering:pixelated}
+.overlay{position:absolute;inset:0;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:1rem}
+.overlay-box{background:var(--bg2);border:1px solid rgba(245,200,66,.3);border-radius:6px;padding:2rem;max-width:360px;width:100%;display:flex;flex-direction:column;gap:.75rem;align-items:center;text-align:center}
+.overlay-box.red{border-color:rgba(232,48,74,.5)}
+.overlay-box.gold{border-color:rgba(245,200,66,.6)}
+.overlay-tag{font-family:'Syne',sans-serif;font-size:.65rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase}
+.overlay-box h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.4rem,5vw,2rem);color:var(--white);letter-spacing:.04em}
+.overlay-sub{font-size:.82rem;color:#aaa;font-family:'Syne',sans-serif}
+.instructions{display:flex;flex-direction:column;gap:.4rem;font-family:'Syne',sans-serif;font-size:.8rem;color:#bbb;text-align:left;background:rgba(255,255,255,.04);border-radius:4px;padding:1rem;width:100%}
+.play-btn{background:var(--gold);color:#000;font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem;letter-spacing:.08em;padding:.8rem 1.5rem;border-radius:3px;border:none;cursor:pointer;text-transform:uppercase;transition:all .15s;margin-top:.5rem}
+.play-btn:hover{background:var(--gold2);transform:scale(1.02)}
+.final-score{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--teal);letter-spacing:.06em}
+.win-message{font-family:'Syne',sans-serif;font-size:.82rem;color:var(--gold);line-height:1.6;border-top:1px solid rgba(245,200,66,.2);padding-top:.75rem;margin-top:.25rem;width:100%;text-align:center}
+.dpad{display:flex;flex-direction:column;align-items:center;gap:4px;margin:0 auto}
+.drow{display:flex;gap:4px}
+.dbtn{width:52px;height:52px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:6px;color:var(--white);font-size:1.2rem;cursor:pointer;transition:background .1s;user-select:none;touch-action:none}
+.dbtn:active{background:rgba(245,200,66,.25)}
+.dbtn.center{visibility:hidden}
+.game-footer{display:flex;justify-content:center}
+.footer-link{background:none;border:none;color:var(--gray);font-family:'Syne',sans-serif;font-size:.78rem;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;transition:color .2s}
+.footer-link:hover{color:var(--teal)}
+</style>
+</head>
+<body>
+<div class="scanlines"></div>
+
+<!-- LANDING PAGE -->
+<div id="page-landing" class="page active">
+  <div class="stars" id="stars"></div>
+  <div class="landing-content">
+    <div class="warning-tape">⚠ CLASSIFIED: DO NOT SHOW ATLY ⚠</div>
+    <div class="title-block">
+      <div class="age-badge">30</div>
+      <h1 class="main-title">
+        <span class="tl1">HAPPY</span>
+        <span class="tl2">BIRTHDAY</span>
+        <span class="tl3">ATLY</span>
+      </h1>
+      <div class="subtitle">aka the most kona man in Kerala</div>
+    </div>
+    <div class="story-box">
+      <div class="story-label">// SITUATION REPORT //</div>
+      <p>Our dear Atly Yesudas has officially completed <strong>30 years</strong> on this planet. Three decades of unsolicited legal opinions, unnecessarily complicated explanations, sarcastic keyboard solos, and sentences that take 4 minutes to get to the point.</p>
+      <br>
+      <p>Today, he faces his greatest challenge yet: <strong>escaping 30 years of his own nonsense.</strong></p>
+      <br>
+      <span class="highlight-text">🎯 Mission: Help Atly escape a maze of his own iconic quotes, legendary konaness, and the chaos only a lawyer-musician from Kerala could create.</span>
+    </div>
+    <div class="roles-row">
+      <div class="role-chip">⚖️ Lawyer</div>
+      <div class="role-chip">🎹 Keyboardist</div>
+      <div class="role-chip">🎵 Composer</div>
+      <div class="role-chip">🗣️ World-class Kona</div>
+    </div>
+    <div class="cta-section">
+      <div class="cta-label">YOUR MISSION, SHOULD YOU ACCEPT IT:</div>
+      <button class="btn-primary" onclick="showPage('submit')">DROP YOUR ATLY QUOTE →</button>
+      <div class="cta-sub">Submit the most iconic thing he's ever said or done</div>
+      <div id="landing-game-btn"></div>
+      <div id="landing-countdown" class="countdown-block"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SUBMIT PAGE -->
+<div id="page-submit" class="page">
+  <div class="submit-content">
+    <button class="back-btn" onclick="showPage('landing')">← BACK</button>
+    <div>
+      <div class="page-tag">// INTEL SUBMISSION //</div>
+      <h2 class="submit-title">What has Atly said<br>that cannot be unsaid?</h2>
+      <p class="submit-desc" style="margin-top:.75rem">Drop his most iconic quote, legendary kona moment, or a roast he deserves. These will become the obstacles in his escape game.</p>
+    </div>
+    <div class="form-block" id="form-block">
+      <div class="char-count" id="char-count">0 / 300</div>
+      <textarea class="quote-input" id="quote-input" rows="4" placeholder='"Atly explaining why the traffic jam was actually the government's fault..."' maxlength="300" oninput="updateCharCount()"></textarea>
+      <div class="error-msg" id="error-msg" style="display:none"></div>
+      <button class="submit-btn" id="submit-btn" onclick="submitQuote()">FIRE QUOTE INTO THE VOID →</button>
+    </div>
+    <div class="success-block" id="success-block" style="display:none">
+      <div class="success-icon">🎯</div>
+      <h3>Quote registered.</h3>
+      <p>Atly will dodge this on June 15th. We hope he suffers.</p>
+      <button class="outline-btn" onclick="resetForm()">ADD ANOTHER QUOTE</button>
+    </div>
+    <div class="countdown-teaser">
+      <div id="submit-game-area"></div>
+      <div id="submit-countdown-area"></div>
+    </div>
+    <div>
+      <div class="wall-label" id="wall-label">// SUBMITTED INTEL — LOADING... //</div>
+      <div id="quotes-wall"></div>
+    </div>
+  </div>
+</div>
+
+<!-- GAME PAGE -->
+<div id="page-game" class="game-page">
+  <div class="game-inner">
+    <div class="game-topbar">
+      <button class="back-btn" onclick="exitGame()">← EXIT</button>
+      <div class="game-title-bar">ATLY'S GREAT ESCAPE — 30TH BIRTHDAY EDITION</div>
+      <div class="game-stats">
+        <span class="stat" id="score-el">SCORE: 0</span>
+        <span class="stat hits" id="hits-el">HITS: 0/5</span>
+      </div>
+    </div>
+    <div class="canvas-wrap">
+      <canvas id="game-canvas" width="600" height="500"></canvas>
+      <div class="overlay" id="game-overlay">
+        <div class="overlay-box" id="overlay-box">
+          <div class="overlay-tag">// MISSION BRIEFING //</div>
+          <h2>ATLY'S GREAT ESCAPE</h2>
+          <div class="overlay-sub">Atly must escape the maze of his own making.</div>
+          <div class="instructions">
+            <div>🕹️ Arrow keys or WASD to move</div>
+            <div>🚀 Reach the 🏁 flag to win</div>
+            <div>💬 Dodge flying quotes — 5 hits = GAME OVER</div>
+            <div>📱 Mobile: Use the D-pad below</div>
+          </div>
+          <button class="play-btn" onclick="startGame()">START THE ESCAPE →</button>
+        </div>
+      </div>
+    </div>
+    <div class="dpad">
+      <div class="drow"><button class="dbtn" id="btn-up">↑</button></div>
+      <div class="drow">
+        <button class="dbtn" id="btn-left">←</button>
+        <button class="dbtn center"></button>
+        <button class="dbtn" id="btn-right">→</button>
+      </div>
+      <div class="drow"><button class="dbtn" id="btn-down">↓</button></div>
+    </div>
+    <div class="game-footer">
+      <button class="footer-link" onclick="exitGame();showPage('submit')">← ADD MORE QUOTES</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// SUPABASE
+const sb = supabase.createClient(
+  'https://wjvqwiibrqqhbrcvuwld.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqdnF3aWlicnFxaGJyY3Z1d2xkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NDY3ODEsImV4cCI6MjA5NjQyMjc4MX0.LYv85LOoADXgiijDNw355hZIBWrAlRyMumD1_nsimSo'
+)
+
+const BIRTHDAY = new Date('2026-06-15T00:00:00')
+const W=600,H=500,T=40,COLS=W/T,ROWS=H/T
+
+// STARS
+const starsEl = document.getElementById('stars')
+for(let i=0;i<60;i++){
+  const s=document.createElement('div')
+  s.className='star'
+  s.style.cssText=`left:${(i*37.3+11)%100}%;top:${(i*53.7+7)%100}%;animation-delay:${(i*0.17)%3}s;width:${(i%2)+1}px;height:${(i%2)+1}px`
+  starsEl.appendChild(s)
+}
+
+// NAVIGATION
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'))
+  document.querySelectorAll('.game-page').forEach(p=>p.classList.remove('active'))
+  if(name==='game') document.getElementById('page-game').classList.add('active')
+  else document.getElementById('page-'+name).classList.add('active')
+  window.scrollTo(0,0)
+  if(name==='submit') loadQuotes()
+  updateGameButtons()
+}
+
+// COUNTDOWN
+function getCountdown(){
+  const diff=BIRTHDAY-new Date()
+  if(diff<=0)return null
+  return{
+    d:Math.floor(diff/86400000),
+    h:Math.floor((diff%86400000)/3600000),
+    m:Math.floor((diff%3600000)/60000),
+    s:Math.floor((diff%60000)/1000)
+  }
+}
+function pad(n){return String(n).padStart(2,'0')}
+
+function updateGameButtons(){
+  const unlocked=new Date()>=BIRTHDAY
+  // Landing
+  const lBtn=document.getElementById('landing-game-btn')
+  const lCD=document.getElementById('landing-countdown')
+  if(unlocked){
+    lBtn.innerHTML=`<button class="btn-secondary" style="margin-top:1rem" onclick="showPage('game')">🎮 PLAY THE ESCAPE GAME (LIVE!)</button>`
+    lCD.style.display='none'
+  } else {
+    lBtn.innerHTML=''
+    lCD.style.display='flex'
+  }
+  // Submit
+  const sArea=document.getElementById('submit-game-area')
+  const sCDA=document.getElementById('submit-countdown-area')
+  if(unlocked){
+    sArea.innerHTML=`<div class="live-row"><div class="live-dot"></div><span>GAME IS LIVE! </span><button class="inline-link" onclick="showPage('game')">Play now →</button></div>`
+    sCDA.innerHTML=''
+  } else {
+    sArea.innerHTML=`<div class="teaser-label">🔒 GAME UNLOCKS ON JUNE 15TH IN</div>`
+    sCDA.innerHTML=`<div class="cd-mini" id="cd-mini-submit"></div>`
+  }
+}
+
+function updateCountdowns(){
+  const cd=getCountdown()
+  if(!cd) return
+  const lCD=document.getElementById('landing-countdown')
+  if(lCD && lCD.style.display!=='none'){
+    lCD.innerHTML=`
+      <div class="countdown-label">🔒 GAME UNLOCKS IN</div>
+      <div class="countdown-digits">
+        <div class="cd-unit"><span>${pad(cd.d)}</span><label>days</label></div>
+        <div class="cd-sep">:</div>
+        <div class="cd-unit"><span>${pad(cd.h)}</span><label>hrs</label></div>
+        <div class="cd-sep">:</div>
+        <div class="cd-unit"><span>${pad(cd.m)}</span><label>min</label></div>
+        <div class="cd-sep">:</div>
+        <div class="cd-unit"><span>${pad(cd.s)}</span><label>sec</label></div>
+      </div>
+      <div class="countdown-note">on June 15th — Atly's 30th birthday</div>`
+  }
+  const cm=document.getElementById('cd-mini-submit')
+  if(cm) cm.innerHTML=`<span>${pad(cd.d)}d</span><span>${pad(cd.h)}h</span><span>${pad(cd.m)}m</span><span>${pad(cd.s)}s</span>`
+}
+setInterval(updateCountdowns,1000)
+updateGameButtons()
+updateCountdowns()
+
+// SUBMIT
+function updateCharCount(){
+  const v=document.getElementById('quote-input').value
+  document.getElementById('char-count').textContent=v.length+' / 300'
+}
+
+async function submitQuote(){
+  const q=document.getElementById('quote-input').value.trim()
+  const err=document.getElementById('error-msg')
+  const btn=document.getElementById('submit-btn')
+  if(!q){return}
+  if(q.length<5){err.textContent='Too short! Give us the full kona energy.';err.style.display='block';return}
+  err.style.display='none'
+  btn.disabled=true;btn.textContent='LAUNCHING...'
+  const {error}=await sb.from('quotes').insert([{quote:q}])
+  btn.disabled=false;btn.textContent='FIRE QUOTE INTO THE VOID →'
+  if(error){err.textContent='Something went wrong. Try again!';err.style.display='block';return}
+  document.getElementById('form-block').style.display='none'
+  document.getElementById('success-block').style.display='flex'
+  loadQuotes()
+}
+
+function resetForm(){
+  document.getElementById('quote-input').value=''
+  document.getElementById('char-count').textContent='0 / 300'
+  document.getElementById('form-block').style.display='flex'
+  document.getElementById('success-block').style.display='none'
+}
+
+async function loadQuotes(){
+  const wall=document.getElementById('quotes-wall')
+  const label=document.getElementById('wall-label')
+  const {data}=await sb.from('quotes').select('quote,created_at').order('created_at',{ascending:false}).limit(50)
+  if(!data||data.length===0){
+    label.textContent='// SUBMITTED INTEL — 0 QUOTES SO FAR //'
+    wall.innerHTML='<div class="empty-wall">No quotes yet. Be the first to roast him.</div>'
+    return
+  }
+  label.textContent=`// SUBMITTED INTEL — ${data.length} QUOTES SO FAR //`
+  wall.innerHTML='<div class="quotes-grid">'+data.map((q,i)=>`
+    <div class="quote-card l${(i%3)+1}">
+      <div class="quote-num">#${String(data.length-i).padStart(2,'0')}</div>
+      <p class="quote-text">"${q.quote}"</p>
+    </div>`).join('')+'</div>'
+}
+
+// GAME ENGINE
+const FALLBACK=[
+  "Actually, from a legal standpoint...","No but hear me out...",
+  "As a musician I would say...","Let me explain why you're wrong",
+  "Technically speaking...","I have a different perspective",
+  "That's not how law works","On the contrary...",
+  "My point is, and I say this with respect...","Allow me to elaborate at length",
+]
+
+let gameRunning=false,gameMaze,gamePx,gamePy,gameFrame,gameObstacles,gameQuotes,gameScore,gameHits,gameSpawnTimer,gameSpawnInterval,gameLastMove,gameRaf
+const gameInp={up:false,down:false,left:false,right:false}
+
+function buildMaze(){
+  const m=Array.from({length:ROWS},()=>Array(COLS).fill(1))
+  function carve(r,c){
+    const dirs=[[0,2],[2,0],[0,-2],[-2,0]].sort(()=>Math.random()-.5)
+    for(const[dr,dc]of dirs){
+      const nr=r+dr,nc=c+dc
+      if(nr>0&&nr<ROWS-1&&nc>0&&nc<COLS-1&&m[nr][nc]===1){
+        m[r+dr/2][c+dc/2]=0;m[nr][nc]=0;carve(nr,nc)
+      }
+    }
+  }
+  m[1][1]=0;carve(1,1);m[ROWS-2][COLS-2]=0;return m
+}
+
+async function startGame(){
+  gameMaze=buildMaze();gamePx=1;gamePy=1;gameFrame=0
+  gameObstacles=[];gameScore=0;gameHits=0
+  gameSpawnTimer=0;gameSpawnInterval=150;gameLastMove=0
+  document.getElementById('score-el').textContent='SCORE: 0'
+  document.getElementById('hits-el').textContent='HITS: 0/5'
+  document.getElementById('game-overlay').style.display='none'
+  const {data}=await sb.from('quotes').select('quote').limit(60)
+  gameQuotes=data&&data.length>0?[...data.map(d=>d.quote),...FALLBACK]:[...FALLBACK]
+  gameRunning=true
+  if(gameRaf)cancelAnimationFrame(gameRaf)
+  gameLoop()
+}
+
+function exitGame(){
+  gameRunning=false
+  if(gameRaf)cancelAnimationFrame(gameRaf)
+  document.getElementById('game-overlay').style.display='flex'
+  document.getElementById('overlay-box').innerHTML=`
+    <div class="overlay-tag">// MISSION BRIEFING //</div>
+    <h2>ATLY'S GREAT ESCAPE</h2>
+    <div class="overlay-sub">Atly must escape the maze of his own making.</div>
+    <div class="instructions">
+      <div>🕹️ Arrow keys or WASD to move</div>
+      <div>🚀 Reach the 🏁 flag to win</div>
+      <div>💬 Dodge flying quotes — 5 hits = GAME OVER</div>
+      <div>📱 Mobile: Use the D-pad below</div>
+    </div>
+    <button class="play-btn" onclick="startGame()">START THE ESCAPE →</button>`
+}
+
+function gameLoop(){
+  if(!gameRunning)return
+  const canvas=document.getElementById('game-canvas')
+  const ctx=canvas.getContext('2d')
+  gameFrame++
+  ctx.fillStyle='#0a0a0f';ctx.fillRect(0,0,W,H)
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+    if(gameMaze[r][c]===1){
+      ctx.fillStyle='#1a1a2e';ctx.fillRect(c*T,r*T,T,T)
+      ctx.strokeStyle='#0d0d1a';ctx.lineWidth=1;ctx.strokeRect(c*T,r*T,T,T)
+    }
+  }
+  // Goal
+  const gx=(COLS-2)*T,gy=(ROWS-2)*T
+  ctx.fillStyle='rgba(245,200,66,0.15)';ctx.fillRect(gx+4,gy+4,T-8,T-8)
+  ctx.strokeStyle='#f5c842';ctx.lineWidth=2;ctx.strokeRect(gx+4,gy+4,T-8,T-8)
+  ctx.fillStyle='#f5c842';ctx.font='18px Arial';ctx.textAlign='center';ctx.textBaseline='middle'
+  ctx.fillText('🏁',gx+T/2,gy+T/2)
+  // Move
+  const now=Date.now()
+  if(now-gameLastMove>145){
+    let nx=gamePx,ny=gamePy
+    if(gameInp.up)ny--;if(gameInp.down)ny++;if(gameInp.left)nx--;if(gameInp.right)nx++
+    if((nx!==gamePx||ny!==gamePy)&&nx>=0&&nx<COLS&&ny>=0&&ny<ROWS&&gameMaze[ny][nx]===0){
+      gamePx=nx;gamePy=ny;gameLastMove=now
+    }
+  }
+  // Win check
+  if(gamePx===COLS-2&&gamePy===ROWS-2){
+    gameRunning=false
+    document.getElementById('game-overlay').style.display='flex'
+    document.getElementById('overlay-box').className='overlay-box gold'
+    document.getElementById('overlay-box').innerHTML=`
+      <div class="overlay-tag">// MISSION COMPLETE //</div>
+      <h2>ATLY ESCAPES! 🎉</h2>
+      <p>He survived 30 years of himself. Barely.</p>
+      <div class="final-score">SCORE: ${Math.floor(gameScore)}</div>
+      <div class="win-message">Happy 30th Birthday, Atly! ❤️<br>From all of us who love-hate your konaness.</div>
+      <button class="play-btn" onclick="startGame()">PLAY AGAIN →</button>`
+    return
+  }
+  // Spawn
+  gameSpawnTimer++
+  if(gameSpawnTimer>=gameSpawnInterval){
+    gameSpawnTimer=0;gameSpawnInterval=Math.max(60,gameSpawnInterval-2)
+    const q=gameQuotes[Math.floor(Math.random()*gameQuotes.length)]
+    const txt=q.length>30?q.slice(0,30)+'...':q
+    gameObstacles.push({
+      txt,x:W+10,y:Math.random()*(H-50)+20,
+      spd:1.3+Math.random()*1.1,
+      w:Math.min(txt.length*7+20,240),h:26,
+      color:['#f5c842','#2ee8c0','#e8304a','#a855f7'][Math.floor(Math.random()*4)],
+      active:true
+    })
+  }
+  // Obstacles
+  gameObstacles=gameObstacles.filter(o=>o.x+o.w>-10)
+  for(const o of gameObstacles){
+    o.x-=o.spd
+    ctx.fillStyle='rgba(0,0,0,0.75)';ctx.fillRect(o.x+2,o.y+2,o.w,o.h)
+    ctx.fillStyle=o.color;ctx.fillRect(o.x,o.y,o.w,o.h)
+    ctx.fillStyle='#000';ctx.font='bold 10px monospace';ctx.textBaseline='middle';ctx.textAlign='left'
+    ctx.fillText(o.txt,o.x+8,o.y+o.h/2)
+    if(o.active){
+      const cx=gamePx*T+T/2,cy=gamePy*T+T/2
+      if(cx>o.x&&cx<o.x+o.w&&cy>o.y&&cy<o.y+o.h){
+        o.active=false;gameHits++;gameScore=Math.max(0,gameScore-10)
+        document.getElementById('hits-el').textContent=`HITS: ${gameHits}/5`
+        if(gameHits>=5){
+          gameRunning=false
+          document.getElementById('game-overlay').style.display='flex'
+          document.getElementById('overlay-box').className='overlay-box red'
+          document.getElementById('overlay-box').innerHTML=`
+            <div class="overlay-tag">// MISSION FAILED //</div>
+            <h2>CAUGHT BY HIS OWN WORDS</h2>
+            <p>5 quotes hit Atly. He couldn't escape his own konaness.</p>
+            <div class="final-score">FINAL SCORE: ${Math.floor(gameScore)}</div>
+            <button class="play-btn" onclick="startGame()">TRY AGAIN →</button>`
+          return
+        }
+      }
+    }
+  }
+  gameScore+=0.02
+  if(gameFrame%30===0) document.getElementById('score-el').textContent=`SCORE: ${Math.floor(gameScore)}`
+  // Player
+  const px=gamePx*T,py=gamePy*T
+  const cx=px+T/2,cy=py+T/2+Math.sin(gameFrame*.15)*1.5
+  ctx.save();ctx.translate(cx,cy)
+  ctx.fillStyle='#1a3a5c';ctx.fillRect(-T*.25,-T*.05,T*.5,T*.45)
+  ctx.fillStyle='#e8304a';ctx.beginPath();ctx.moveTo(0,-T*.05);ctx.lineTo(-4,T*.2);ctx.lineTo(0,T*.25);ctx.lineTo(4,T*.2);ctx.closePath();ctx.fill()
+  ctx.fillStyle='#f5c8a0';ctx.beginPath();ctx.arc(0,-T*.2,T*.2,0,Math.PI*2);ctx.fill()
+  ctx.fillStyle='#1a1a2e';ctx.beginPath();ctx.arc(0,-T*.3,T*.18,Math.PI,0);ctx.fill()
+  ctx.fillStyle='#f5c842';ctx.beginPath();ctx.arc(-T*.28,T*.3,5,0,Math.PI*2);ctx.fill()
+  ctx.restore()
+  gameRaf=requestAnimationFrame(gameLoop)
+}
+
+// KEYBOARD
+window.addEventListener('keydown',e=>{
+  if(e.key==='ArrowUp'||e.key==='w'||e.key==='W'){gameInp.up=true;e.preventDefault()}
+  if(e.key==='ArrowDown'||e.key==='s'||e.key==='S'){gameInp.down=true;e.preventDefault()}
+  if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A'){gameInp.left=true;e.preventDefault()}
+  if(e.key==='ArrowRight'||e.key==='d'||e.key==='D'){gameInp.right=true;e.preventDefault()}
+})
+window.addEventListener('keyup',e=>{
+  if(e.key==='ArrowUp'||e.key==='w'||e.key==='W')gameInp.up=false
+  if(e.key==='ArrowDown'||e.key==='s'||e.key==='S')gameInp.down=false
+  if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A')gameInp.left=false
+  if(e.key==='ArrowRight'||e.key==='d'||e.key==='D')gameInp.right=false
+})
+
+// DPAD
+function dpadPress(dir){Object.keys(gameInp).forEach(k=>gameInp[k]=false);if(dir)gameInp[dir]=true}
+document.getElementById('btn-up').addEventListener('pointerdown',()=>dpadPress('up'))
+document.getElementById('btn-down').addEventListener('pointerdown',()=>dpadPress('down'))
+document.getElementById('btn-left').addEventListener('pointerdown',()=>dpadPress('left'))
+document.getElementById('btn-right').addEventListener('pointerdown',()=>dpadPress('right'))
+document.addEventListener('pointerup',()=>dpadPress(null))
+</script>
+</body>
 </html>
