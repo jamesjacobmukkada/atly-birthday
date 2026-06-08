@@ -51,9 +51,7 @@ function drawPlayer(ctx, x, y, size, frame) {
   ctx.translate(cx, cy + bob)
 
   ctx.fillStyle = PLAYER_COLORS.suit
-  ctx.beginPath()
-  ctx.roundRect(-size * 0.25, -size * 0.05, size * 0.5, size * 0.45, 2)
-  ctx.fill()
+  ctx.fillRect(-size * 0.25, -size * 0.05, size * 0.5, size * 0.45)
 
   ctx.fillStyle = PLAYER_COLORS.tie
   ctx.beginPath()
@@ -127,14 +125,10 @@ class QuoteObstacle {
   draw(ctx) {
     ctx.save()
     ctx.fillStyle = 'rgba(0,0,0,0.75)'
-    ctx.beginPath()
-    ctx.roundRect(this.x + 2, this.y + 2, this.w, this.h, 4)
-    ctx.fill()
+    ctx.fillRect(this.x + 2, this.y + 2, this.w, this.h)
 
     ctx.fillStyle = this.color
-    ctx.beginPath()
-    ctx.roundRect(this.x, this.y, this.w, this.h, 4)
-    ctx.fill()
+    ctx.fillRect(this.x, this.y, this.w, this.h)
 
     ctx.fillStyle = '#000'
     ctx.font = 'bold 10px Space Mono, monospace'
