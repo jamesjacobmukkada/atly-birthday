@@ -26,6 +26,7 @@ function App() {
 
   return (
     <div className="app">
+  <h1 style={{color:'red'}}>TEST VERSION</h1>
       {page === 'landing' && <Landing onNavigate={navigate} gameUnlocked={gameUnlocked} />}
       {page === 'submit' && <Submit onNavigate={navigate} gameUnlocked={gameUnlocked} />}
       {page === 'game' && <Game onNavigate={navigate} />}
