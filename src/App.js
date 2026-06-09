@@ -7,7 +7,7 @@ import './App.css'
 const BIRTHDAY = new Date('2026-06-15T00:00:00')
 
 function App() {
-  const [page, setPage] = useState('game')
+  const [page, setPage] = useState('landing')
   const [gameUnlocked, setGameUnlocked] = useState(false)
 
   useEffect(() => {
