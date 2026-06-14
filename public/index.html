@@ -363,7 +363,10 @@ function resetForm(){
 async function loadQuotes(){
   const wall=document.getElementById('quotes-wall')
   const label=document.getElementById('wall-label')
-  const {data}=await sb.from('quotes').select('quote,created_at').order('created_at',{ascending:false}).limit(50)
+  gameRunning=true
+  if(gameRaf)cancelAnimationFrame(gameRaf)
+  gameLoop()
+  sb.from('quotes').select('quote,created_at').order('created_at',{ascending:false}).limit(50)
   if(!data||data.length===0){
     label.textContent='// SUBMITTED INTEL — 0 QUOTES SO FAR //'
     wall.innerHTML='<div class="empty-wall">No quotes yet. Be the first to roast him.</div>'
@@ -403,18 +406,19 @@ function buildMaze(){
   m[1][1]=0;carve(1,1);m[ROWS-2][COLS-2]=0;return m
 }
 
-async function startGame(){
+function startGame(){
   gameMaze=buildMaze();gamePx=1;gamePy=1;gameFrame=0
   gameObstacles=[];gameScore=0;gameHits=0
   gameSpawnTimer=0;gameSpawnInterval=150;gameLastMove=0
   document.getElementById('score-el').textContent='SCORE: 0'
   document.getElementById('hits-el').textContent='HITS: 0/5'
   document.getElementById('game-overlay').style.display='none'
-  const {data}=await sb.from('quotes').select('quote').limit(60)
-  gameQuotes=data&&data.length>0?[...data.map(d=>d.quote),...FALLBACK]:[...FALLBACK]
+  gameQuotes=[...FALLBACK]
   gameRunning=true
   if(gameRaf)cancelAnimationFrame(gameRaf)
   gameLoop()
+  sb.from('quotes').select('quote').limit(60)
+    .then(({data})=>{ if(data&&data.length>0) gameQuotes=[...data.map(d=>d.quote),...FALLBACK] })
 }
 
 function exitGame(){
