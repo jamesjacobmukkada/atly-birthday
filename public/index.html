@@ -323,7 +323,7 @@ async function loadQuotes(){
 
 // ── GAME ──────────────────────────────────────────────
 const W=600,H=480,T=40,COLS=15,ROWS=12
-const FALLBACK=['Actually, from a legal standpoint...','No but hear me out...','As a musician I would say...','Let me explain why you\'re wrong','Technically speaking...','I have a different perspective','That\'s not how law works','On the contrary...','My point is, and I say this with respect...','Allow me to elaborate at length']
+const FALLBACK=['No quotes yet — add some!']
 
 let gRunning=false,gMaze,gPx,gPy,gFrame=0,gObs=[],gQuotes=[...FALLBACK],gScore=0,gHits=0,gSpawnT=0,gSpawnI=150,gLastMove=0,gRaf=null
 const gInp={up:false,down:false,left:false,right:false}
@@ -345,7 +345,7 @@ function startGame(){
   document.getElementById('hits-el').textContent='HITS: 0/5'
   document.getElementById('game-overlay').style.display='none'
   gQuotes=[...FALLBACK]
-  sb.from('quotes').select('quote').limit(60).then(({data})=>{if(data&&data.length)gQuotes=[...data.map(d=>d.quote),...FALLBACK]})
+  sb.from('quotes').select('quote').limit(60).then(({data})=>{if(data&&data.length)gQuotes=data.map(d=>d.quote)})
   if(gRaf)cancelAnimationFrame(gRaf)
   gRunning=true
   gLoop()
@@ -424,8 +424,9 @@ function gLoop(){
     gSpawnT=0
     gSpawnI=Math.max(60,gSpawnI-1.5)
     const q=gQuotes[Math.floor(Math.random()*gQuotes.length)]
-    const txt=q.length>32?q.slice(0,32)+'...':q
-    gObs.push({txt,x:W+10,y:20+Math.random()*(H-60),spd:1.4+Math.random()*1.2,w:Math.min(txt.length*7+16,250),h:26,color:['#f5c842','#2ee8c0','#e8304a','#a855f7'][Math.floor(Math.random()*4)],active:true})
+    const txt=q
+    const obsW=Math.min(txt.length*7+20,W-20)
+    gObs.push({txt,x:W+10,y:20+Math.random()*(H-60),spd:1.4+Math.random()*1.2,w:obsW,h:28,color:['#f5c842','#2ee8c0','#e8304a','#a855f7'][Math.floor(Math.random()*4)],active:true})
   }
 
   // Update & draw obstacles
@@ -437,7 +438,7 @@ function gLoop(){
     ctx.fillStyle=o.color
     ctx.fillRect(o.x,o.y,o.w,o.h)
     ctx.fillStyle='#000'
-    ctx.font='bold 9px monospace'
+    ctx.font='bold 10px monospace'
     ctx.textBaseline='middle'
     ctx.textAlign='left'
     ctx.fillText(o.txt,o.x+6,o.y+o.h/2)
